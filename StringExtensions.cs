@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -11,7 +12,7 @@ namespace iStringExtensions
     {
         public static List<string> WrapWithAList(this string input) => new List<string>() { input };
 
-        public static string[] WrapWithAnArray(this string input) => new [] { input };
+        public static string[] WrapWithAnArray(this string input) => new[] { input };
 
         public static int LevenshteinDistance(this string input, string textToCalculate)
         {
@@ -35,7 +36,7 @@ namespace iStringExtensions
         /// <param name="ignoreNonMatching"></param>
         /// <returns></returns>
         public static IEnumerable<T> SplitAsEnumerableOf<T>(this string input, string separator, bool ignoreNonMatching = false)
-            where T: struct
+            where T : struct
         {
             Guard.AgainstNull(input);
 
@@ -60,7 +61,6 @@ namespace iStringExtensions
             return result;
         }
 
-
         public static bool RegexMatch(this string input, string regexPattern)
         {
             Guard.AgainstNull(input);
@@ -77,9 +77,11 @@ namespace iStringExtensions
             var regex = new Regex(regexPattern).Match(input);
             var results = new List<string>();
 
-            for (int i = 0; i < regex.Groups.Count; i++)
+            if (regex?.Groups != null)
             {
-                results.Add(regex.Groups[i].Value);
+                for(int i = 0; i < regex.Groups.Count; i++) {
+                    results.Add(regex.Groups[i].Value);
+                }
             }
 
             return results.ToArray();
@@ -109,12 +111,36 @@ namespace iStringExtensions
 
         public static string GetMd5Hash(this string input)
         {
-            throw new NotImplementedException();
+            using (MD5 md5 = MD5.Create())
+            {
+                var inputBytes = Encoding.ASCII.GetBytes(input);
+                var hashBytes = md5.ComputeHash(inputBytes);
+                var sb = new StringBuilder();
+
+                for (int i = 0; i < hashBytes.Length; i++)
+                {
+                    sb.Append(hashBytes[i].ToString("X2"));
+                }
+
+                return sb.ToString();
+            }
         }
 
         public static string GetSha1Hash(this string input)
         {
-            throw new NotImplementedException();
+            using (SHA1 sha1 = SHA1.Create())
+            {
+                var inputBytes = Encoding.ASCII.GetBytes(input);
+                var hashBytes = sha1.ComputeHash(inputBytes);
+                var sb = new StringBuilder();
+
+                for (int i = 0; i < hashBytes.Length; i++)
+                {
+                    sb.Append(hashBytes[i].ToString("X2"));
+                }
+
+                return sb.ToString();
+            }
         }
 
         public static MemoryStream ToMemoryStream(this string input)
@@ -146,14 +172,6 @@ namespace iStringExtensions
             }
 
             return result.ToString();
-        }
-
-        public static string ReverseWords(this string input)
-        {
-            Guard.AgainstNull(input);
-
-
-            throw new NotImplementedException();
         }
 
         public static string AllWhiteSpacesTo(this string input, WhiteSpaceType whiteSpaceType)
@@ -230,7 +248,7 @@ namespace iStringExtensions
                 throw new StringExtensionsException("Not a valid querystring");
             }
 
-            var parts = new string[1];
+            string[] parts;
 
             if (!input.Contains(";"))
             {
