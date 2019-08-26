@@ -291,30 +291,43 @@ namespace UnitTests
         public void ConsolidateSpaces_ReturnsCorrectResult()
         {
             // arrange
-            // act
-            // assert
+            var testString = "This text    contains  some  spaces";
+            var expected = "This text contains some spaces";
 
-            throw new Exception("Inconclusive");
+            // act
+            var actual = testString.ConsolidateSpaces();
+
+            // assert
+            actual.Should().Be(expected);
         }
 
-        [Fact]
-        public void IsIpV4_ReturnsCorrectResult()
+        [Theory]
+        [InlineData("10.0.0.12", true)]
+        [InlineData("255.255.255.255", true)]
+        [InlineData("asdf", false)]
+        [InlineData("255.255.255.300", false)]
+        public void IsIpV4_ReturnsCorrectResult(string testString, bool expected)
         {
             // arrange
             // act
-            // assert
+            var actual = testString.IsIpV4();
 
-            throw new Exception("Inconclusive");
+            // assert
+            actual.Should().Be(expected);
         }
 
-        [Fact]
-        public void IsIpV6_ReturnsCorrectResult()
+        [Theory]
+        [InlineData("0:0:0:0:0:0:0:1", true)]
+        [InlineData("255.255.255.255", false)]
+        [InlineData("asdf", false)]
+        public void IsIpV6_ReturnsCorrectResult(string testString, bool expected)
         {
             // arrange
             // act
-            // assert
+            var actual = testString.IsIpV6();
 
-            throw new Exception("Inconclusive");
+            // assert
+            actual.Should().Be(expected);
         }
 
         [Fact]
@@ -327,14 +340,20 @@ namespace UnitTests
             throw new Exception("Inconclusive");
         }
 
-        [Fact]
-        public void IsEmail_ReturnsCorrectResult()
+        [Theory]
+        [InlineData("asdf@asdf.com", true)]
+        [InlineData("asdf@asdf.london", true)]
+        [InlineData("asdf.fdsa@asdf.com", true)]
+        [InlineData("asdf_fdsa@asdf.com", true)]
+        [InlineData("asdf fdsa@asdf.com", false)]
+        public void IsEmail_ReturnsCorrectResult(string testString, bool expected)
         {
             // arrange
             // act
-            // assert
+            var actual = testString.IsIpV6();
 
-            throw new Exception("Inconclusive");
+            // assert
+            actual.Should().Be(expected);
         }
 
         [Fact]

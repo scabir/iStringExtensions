@@ -284,11 +284,11 @@ namespace iStringExtensions
         public static int CountOccurences(this string input, string character)
         {
             var count = 0;
-            var i = 0;
+            var index = 0;
 
-            while ((i = input.IndexOf(character, i)) != -1)
+            while ((index = input.IndexOf(character, index)) != -1)
             {
-                i += character.Length;
+                index += character.Length;
                 count++;
             }
 
