@@ -41,7 +41,7 @@ namespace iStringExtensions
             Guard.AgainstNull(input);
 
             var result = new List<T>();
-            var parts = input.Split(input.WrapWithAnArray(), StringSplitOptions.None);
+            var parts = input.Split(separator.WrapWithAnArray(), StringSplitOptions.None);
 
             foreach (var part in parts)
             {
@@ -49,7 +49,7 @@ namespace iStringExtensions
                 {
                     result.Add((T)Convert.ChangeType(part, typeof(T)));
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     if (!ignoreNonMatching)
                     {
@@ -166,7 +166,7 @@ namespace iStringExtensions
 
             var result = new StringBuilder();
 
-            for (int i = input.Length - 1; i > 0; i--)
+            for (int i = input.Length - 1; i >= 0; i--)
             {
                 result.Append(input[i]);
             }
