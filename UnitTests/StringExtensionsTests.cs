@@ -5,6 +5,8 @@ using FluentAssertions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnitTests.Model;
+using System.IO;
 
 namespace UnitTests
 {
@@ -15,14 +17,13 @@ namespace UnitTests
         {
             // arrange
             var testString = "Some test string";
-            var expected = new List<string>() { testString };
+            var expected = new List<string> { testString };
 
             // act
             var actual = testString.WrapWithAList();
 
             // assert
-            actual.Should().Equals(expected);
-            Assert.Equal(actual, expected);
+            actual.Should().BeEquivalentTo(expected);
         }
 
         [Fact]
@@ -36,8 +37,7 @@ namespace UnitTests
             var actual = testString.WrapWithAnArray();
 
             // assert
-            actual.Should().Equals(expected);
-            Assert.Equal(actual, expected);
+            actual.Should().BeEquivalentTo(expected);
         }
 
         [Fact]
@@ -96,7 +96,8 @@ namespace UnitTests
             var testString = "asdf,fdsa,ert";
 
             // act && assert
-            Assert.Throws<StringExtensionsException>(() => testString.SplitAsEnumerableOf<int>(","));
+            Action act = () => testString.SplitAsEnumerableOf<int>(",");
+            act.Should().Throw<StringExtensionsException>();
         }
 
         [Theory]
@@ -184,10 +185,15 @@ namespace UnitTests
         public void DeserializeJson_ReturnsCorrectResult()
         {
             // arrange
-            // act
-            // assert
+            string json = "{\"Name\":\"John\", \"Age\":30}";
+            var expected = new Person { Name = "John", Age = 30 };
 
-            throw new Exception("Inconclusive");
+            // act
+            var actual = json.DeserializeJson<Person>();
+
+            // assert
+            actual.Name.Should().Be(expected.Name);
+            actual.Age.Should().Be(expected.Age);
         }
 
         [Fact]
@@ -222,10 +228,15 @@ namespace UnitTests
         public void ToMemoryStream_ReturnsCorrectResult()
         {
             // arrange
-            // act
-            // assert
+            string testString = "Hello, world!";
+            byte[] expected = Encoding.UTF8.GetBytes(testString);
 
-            throw new Exception("Inconclusive");
+            // act
+            MemoryStream result = testString.ToMemoryStream();
+            byte[] actual = result.ToArray();
+
+            // assert
+            actual.Should().Equal(expected);
         }
 
         [Fact]
@@ -334,10 +345,14 @@ namespace UnitTests
         public void ToBytes_ReturnsCorrectResult()
         {
             // arrange
-            // act
-            // assert
+            string testString = "Hello, World!";
+            byte[] expectedBytes = Encoding.UTF8.GetBytes(testString);
 
-            throw new Exception("Inconclusive");
+            // act
+            byte[] actualBytes = testString.ToBytes();
+
+            // assert
+            actualBytes.Should().Equal(expectedBytes);
         }
 
         [Theory]
@@ -360,20 +375,34 @@ namespace UnitTests
         public void QueryStringToDictionary_ReturnsCorrectResult()
         {
             // arrange
-            // act
-            // assert
+            string testQueryString = "key1=value1;key2=value2;key3=value3";
+            var expectedDictionary = new Dictionary<string, string>
+                {
+                    { "key1", "value1" },
+                    { "key2", "value2" },
+                    { "key3", "value3" },
+                };
 
-            throw new Exception("Inconclusive");
+            // act
+            var actualDictionary = testQueryString.QueryStringToDictionary();
+
+            // assert
+            actualDictionary.Should().Equal(expectedDictionary);
         }
 
-        [Fact]
-        public void CountOccurences_ReturnsCorrectResult()
+        [Theory]
+        [InlineData("hello world", "l", 3)]
+        [InlineData("hello world", "o", 2)]
+        [InlineData("hello world", " ", 1)]
+        [InlineData("hello world", "z", 0)]
+        public void CountOccurences_ReturnsCorrectResult(string testString, string character, int expected)
         {
-            // arrange
             // act
-            // assert
+            var actual = testString.CountOccurences(character);
 
-            throw new Exception("Inconclusive");
+            // assert
+            actual.Should().Be(expected);
         }
+
     }
 }
