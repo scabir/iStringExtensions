@@ -7,7 +7,7 @@
     <Company />
     <Description>Group of useful string extensions packed.</Description>
     <Copyright>Suleyman Cabir Ataman</Copyright>
-    <PackageIconUrl>https://github.com/scabir/iStringExtensions/blob/master/iStringExtensions/icon.png</PackageIconUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/scabir/iStringExtensions/master/iStringExtensions/icon.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/scabir/iStringExtensions/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/scabir/iStringExtensions/</RepositoryUrl>
     <PackageTags>mongodb, repository, pattern, db, database, nosql, nuget, package, document</PackageTags>
