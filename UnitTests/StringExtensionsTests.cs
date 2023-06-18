@@ -350,7 +350,7 @@ namespace UnitTests
         {
             // arrange
             // act
-            var actual = testString.IsIpV6();
+            var actual = testString.IsEmail();
 
             // assert
             actual.Should().Be(expected);

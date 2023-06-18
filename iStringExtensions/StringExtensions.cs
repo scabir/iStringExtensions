@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -10,15 +11,37 @@ namespace iStringExtensions
 {
     public static class StringExtensions
     {
+        /// <summary>
+        /// Wraps a string in a list.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static List<string> WrapWithAList(this string input) => new List<string>() { input };
 
+        /// <summary>
+        /// Wraps a string in an array.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static string[] WrapWithAnArray(this string input) => new[] { input };
 
+        /// <summary>
+        /// Calculate the Levenshtein distance and percentage between two strings.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="textToCalculate"></param>
+        /// <returns></returns>
         public static int LevenshteinDistance(this string input, string textToCalculate)
         {
             return Fastenshtein.Levenshtein.Distance(input, textToCalculate);
         }
 
+        /// <summary>
+        /// Calculate the Levenshtein distance and percentage between two strings.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="textToCalculate"></param>
+        /// <returns></returns>
         public static double LevenshteinPercentage(this string input, string textToCalculate)
         {
             var percentageBase = Math.Max(input.Length, textToCalculate.Length);
@@ -61,6 +84,12 @@ namespace iStringExtensions
             return result;
         }
 
+        /// <summary>
+        /// Perform Regex matching operations.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="regexPattern"></param>
+        /// <returns></returns>
         public static bool RegexMatch(this string input, string regexPattern)
         {
             Guard.AgainstNull(input);
@@ -69,6 +98,12 @@ namespace iStringExtensions
             return (new Regex(regexPattern)).IsMatch(input);
         }
 
+        /// <summary>
+        /// Perform Regex matching and extraction operations.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="regexPattern"></param>
+        /// <returns></returns>
         public static string[] RegexExtract(this string input, string regexPattern)
         {
             Guard.AgainstNull(input);
@@ -87,9 +122,18 @@ namespace iStringExtensions
             return results.ToArray();
         }
 
+        /// <summary>
+        /// Check if a string is valid JSON
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="regexPattern"></param>
+        /// <returns></returns>
         public static bool IsJson(this string input)
         {
-            Guard.AgainstNull(input);
+            if (string.IsNullOrEmpty(input))
+            {
+                return false;
+            }
 
             try
             {
@@ -103,17 +147,40 @@ namespace iStringExtensions
             }
         }
 
+        /// <summary>
+        /// Check if a string is a valid number
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="regexPattern"></param>
+        /// <returns></returns>
         public static bool IsNumber(this string input) => double.TryParse(input, out var output);
 
+        /// <summary>
+        /// Check if a string is a valid integer.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="regexPattern"></param>
+        /// <returns></returns>
         public static bool IsInteger(this string input) => int.TryParse(input, out var output);
 
+        /// <summary>
+        /// Deserialize a JSON string to a specified type.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static T DeserializeJson<T>(this string input) => JsonConvert.DeserializeObject<T>(input);
 
+        /// <summary>
+        /// Compute MD5 hash of a string.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static string GetMd5Hash(this string input)
         {
             using (MD5 md5 = MD5.Create())
             {
-                var inputBytes = Encoding.ASCII.GetBytes(input);
+                var inputBytes = Encoding.UTF8.GetBytes(input);
                 var hashBytes = md5.ComputeHash(inputBytes);
                 var sb = new StringBuilder();
 
@@ -126,11 +193,16 @@ namespace iStringExtensions
             }
         }
 
+        /// <summary>
+        /// Compute SHA1 hash of a string.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static string GetSha1Hash(this string input)
         {
             using (SHA1 sha1 = SHA1.Create())
             {
-                var inputBytes = Encoding.ASCII.GetBytes(input);
+                var inputBytes = Encoding.UTF8.GetBytes(input);
                 var hashBytes = sha1.ComputeHash(inputBytes);
                 var sb = new StringBuilder();
 
@@ -143,6 +215,11 @@ namespace iStringExtensions
             }
         }
 
+        /// <summary>
+        /// Convert a string to a MemoryStream.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static MemoryStream ToMemoryStream(this string input)
         {
             Guard.AgainstNull(input);
@@ -150,30 +227,49 @@ namespace iStringExtensions
             return new MemoryStream(input.ToBytes());
         }
 
+        /// <summary>
+        /// Convert a string to an Exception object.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static Exception ToException(this string input) => new Exception(input);
 
+        /// <summary>
+        /// Convert a string to an Exception object.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static Exception ToException<TException>(this string input)
             where TException : Exception
         {
             return (TException)input.ToException();
         }
 
+        /// <summary>
+        /// Convert a string to a StringBuilder object.
+        /// </summary>
+        /// <typeparam name="TException"></typeparam>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static StringBuilder ToStringBuilder(this string input) => new StringBuilder(input);
 
+        /// <summary>
+        /// Reverse a string.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static string ReverseString(this string input)
         {
             Guard.AgainstNull(input);
-
-            var result = new StringBuilder();
-
-            for (int i = input.Length - 1; i >= 0; i--)
-            {
-                result.Append(input[i]);
-            }
-
-            return result.ToString();
+            return new string(input.Reverse().ToArray());
         }
 
+        /// <summary>
+        /// Replace all whitespace characters with a specified whitespace character.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="whiteSpaceType"></param>
+        /// <returns></returns>
         public static string AllWhiteSpacesTo(this string input, WhiteSpaceType whiteSpaceType)
         {
             string whiteSpace = " ";
@@ -198,18 +294,22 @@ namespace iStringExtensions
                 .Replace("\t", whiteSpace);
         }
 
+        /// <summary>
+        /// Replace multiple consecutive spaces with a single space.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static string ConsolidateSpaces(this string input)
         {
             Guard.AgainstNull(input);
-
-            var result = input.Clone().ToString();
-
-            while (result.Contains("  "))
-                result = result.Replace("  ", " ");
-
-            return result;
+            return Regex.Replace(input, @"\s+", " ");
         }
 
+        /// <summary>
+        /// Check if a string is a valid IPv4 address.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static bool IsIpV4(this string input)
         {
             Guard.AgainstNull(input);
@@ -219,6 +319,11 @@ namespace iStringExtensions
             return input.RegexMatch(IpV4Regex);
         }
 
+        /// <summary>
+        /// Check if a string is a valid IPv6 address.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static bool IsIpV6(this string input)
         {
             Guard.AgainstNull(input);
@@ -228,17 +333,33 @@ namespace iStringExtensions
             return input.RegexMatch(IpV6Regex);
         }
 
+        /// <summary>
+        /// Convert a string to a byte array.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static byte[] ToBytes(this string input) => Encoding.UTF8.GetBytes(input);
 
+        /// <summary>
+        /// Check if a string is a valid email address.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static bool IsEmail(this string input)
         {
             Guard.AgainstNull(input);
 
-            const string EmailRegex = @"[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*";
+            const string EmailRegex = @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$";
 
             return input.RegexMatch(EmailRegex);
         }
 
+        /// <summary>
+        ///  Convert a query string to a dictionary.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        /// <exception cref="StringExtensionsException"></exception>
         public static Dictionary<string, string> QueryStringToDictionary(this string input)
         {
             Guard.AgainstNull(input);
@@ -281,18 +402,10 @@ namespace iStringExtensions
             return result;
         }
 
+        //Count the occurrences of a specified character in a string.
         public static int CountOccurences(this string input, string character)
         {
-            var count = 0;
-            var index = 0;
-
-            while ((index = input.IndexOf(character, index)) != -1)
-            {
-                index += character.Length;
-                count++;
-            }
-
-            return count;
+            return input.Split(new string[] { character }, StringSplitOptions.None).Length - 1;
         }
     }
 }
