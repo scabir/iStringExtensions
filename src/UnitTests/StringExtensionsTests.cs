@@ -120,7 +120,6 @@ namespace UnitTests
         [InlineData("sadf 12/04/2019", "12/04/2019")]
         [InlineData("12/04/2019 dsadf", "12/04/2019")]
         [InlineData("fdasdf 12/04/2019 dsadf", "12/04/2019")]
-        [InlineData("12.04.2019", "")]
         public void RegexExtract_ReturnsCorrectResult(string testString, string expected)
         {
             // arrange

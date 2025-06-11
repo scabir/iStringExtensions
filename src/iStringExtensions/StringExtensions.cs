@@ -16,14 +16,24 @@ namespace iStringExtensions
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public static List<string> WrapWithAList(this string input) => new List<string>() { input };
+        public static List<string> WrapWithAList(this string input)
+        {
+            Guard.AgainstNull(input);
+
+            return new List<string>() { input };
+        }
 
         /// <summary>
         /// Wraps a string in an array.
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public static string[] WrapWithAnArray(this string input) => new[] { input };
+        public static string[] WrapWithAnArray(this string input)
+        {
+            Guard.AgainstNull(input);
+
+            return new[] { input };
+        }
 
         /// <summary>
         /// Calculate the Levenshtein distance and percentage between two strings.
@@ -33,6 +43,9 @@ namespace iStringExtensions
         /// <returns></returns>
         public static int LevenshteinDistance(this string input, string textToCalculate)
         {
+            Guard.AgainstNull(input);
+            Guard.AgainstNull(textToCalculate);
+
             return Fastenshtein.Levenshtein.Distance(input, textToCalculate);
         }
 
@@ -44,6 +57,9 @@ namespace iStringExtensions
         /// <returns></returns>
         public static double LevenshteinPercentage(this string input, string textToCalculate)
         {
+            Guard.AgainstNull(input);
+            Guard.AgainstNull(textToCalculate);
+
             var percentageBase = Math.Max(input.Length, textToCalculate.Length);
             var distance = input.LevenshteinDistance(textToCalculate);
 
@@ -62,6 +78,7 @@ namespace iStringExtensions
             where T : struct
         {
             Guard.AgainstNull(input);
+            Guard.AgainstNull(separator);
 
             var result = new List<T>();
             var parts = input.Split(separator.WrapWithAnArray(), StringSplitOptions.None);
@@ -130,6 +147,8 @@ namespace iStringExtensions
         /// <returns></returns>
         public static bool IsJson(this string input)
         {
+            Guard.AgainstNull(input);
+
             if (string.IsNullOrEmpty(input))
             {
                 return false;
@@ -153,7 +172,12 @@ namespace iStringExtensions
         /// <param name="input"></param>
         /// <param name="regexPattern"></param>
         /// <returns></returns>
-        public static bool IsNumber(this string input) => double.TryParse(input, out var output);
+        public static bool IsNumber(this string input)
+        {
+            Guard.AgainstNull(input);
+
+            return double.TryParse(input, out var output);
+        }
 
         /// <summary>
         /// Check if a string is a valid integer.
@@ -161,7 +185,12 @@ namespace iStringExtensions
         /// <param name="input"></param>
         /// <param name="regexPattern"></param>
         /// <returns></returns>
-        public static bool IsInteger(this string input) => int.TryParse(input, out var output);
+        public static bool IsInteger(this string input)
+        {
+            Guard.AgainstNull(input);
+
+            return int.TryParse(input, out var output);
+        }
 
         /// <summary>
         /// Deserialize a JSON string to a specified type.
@@ -169,7 +198,12 @@ namespace iStringExtensions
         /// <typeparam name="T"></typeparam>
         /// <param name="input"></param>
         /// <returns></returns>
-        public static T DeserializeJson<T>(this string input) => JsonConvert.DeserializeObject<T>(input);
+        public static T DeserializeJson<T>(this string input)
+        {
+            Guard.AgainstNull(input);
+
+            return JsonConvert.DeserializeObject<T>(input);
+        }
 
         /// <summary>
         /// Compute MD5 hash of a string.
@@ -178,6 +212,8 @@ namespace iStringExtensions
         /// <returns></returns>
         public static string GetMd5Hash(this string input)
         {
+            Guard.AgainstNull(input);
+
             using (MD5 md5 = MD5.Create())
             {
                 var inputBytes = Encoding.UTF8.GetBytes(input);
@@ -200,6 +236,8 @@ namespace iStringExtensions
         /// <returns></returns>
         public static string GetSha1Hash(this string input)
         {
+            Guard.AgainstNull(input);
+
             using (SHA1 sha1 = SHA1.Create())
             {
                 var inputBytes = Encoding.UTF8.GetBytes(input);
@@ -232,7 +270,12 @@ namespace iStringExtensions
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public static Exception ToException(this string input) => new Exception(input);
+        public static Exception ToException(this string input)
+        {
+            Guard.AgainstNull(input);
+
+            return new Exception(input);
+        }
 
         /// <summary>
         /// Convert a string to an Exception object.
@@ -242,6 +285,8 @@ namespace iStringExtensions
         public static Exception ToException<TException>(this string input)
             where TException : Exception
         {
+            Guard.AgainstNull(input);
+
             return (TException)input.ToException();
         }
 
@@ -251,7 +296,12 @@ namespace iStringExtensions
         /// <typeparam name="TException"></typeparam>
         /// <param name="input"></param>
         /// <returns></returns>
-        public static StringBuilder ToStringBuilder(this string input) => new StringBuilder(input);
+        public static StringBuilder ToStringBuilder(this string input)
+        {
+            Guard.AgainstNull(input);
+
+            return new StringBuilder(input);
+        }
 
         /// <summary>
         /// Reverse a string.
@@ -261,6 +311,7 @@ namespace iStringExtensions
         public static string ReverseString(this string input)
         {
             Guard.AgainstNull(input);
+
             return new string(input.Reverse().ToArray());
         }
 
@@ -272,6 +323,13 @@ namespace iStringExtensions
         /// <returns></returns>
         public static string AllWhiteSpacesTo(this string input, WhiteSpaceType whiteSpaceType)
         {
+            Guard.AgainstNull(input);
+            
+            if (whiteSpaceType == null)
+            {
+                throw new ArgumentNullException(nameof(whiteSpaceType));
+            }
+
             string whiteSpace = " ";
 
             switch (whiteSpaceType)
@@ -302,6 +360,7 @@ namespace iStringExtensions
         public static string ConsolidateSpaces(this string input)
         {
             Guard.AgainstNull(input);
+
             return Regex.Replace(input, @"\s+", " ");
         }
 
@@ -338,10 +397,15 @@ namespace iStringExtensions
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public static byte[] ToBytes(this string input) => Encoding.UTF8.GetBytes(input);
+        public static byte[] ToBytes(this string input)
+        {
+            Guard.AgainstNull(input);
+
+            return Encoding.UTF8.GetBytes(input);
+        }
 
         /// <summary>
-        /// Check if a string is a valid email address.
+        /// Check if a string formed as a valid email address.
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -405,6 +469,9 @@ namespace iStringExtensions
         //Count the occurrences of a specified character in a string.
         public static int CountOccurences(this string input, string character)
         {
+            Guard.AgainstNull(input);
+            Guard.AgainstNull(character);
+
             return input.Split(new string[] { character }, StringSplitOptions.None).Length - 1;
         }
     }
